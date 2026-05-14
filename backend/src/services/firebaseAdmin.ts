@@ -87,6 +87,9 @@ export const verifyFirebaseToken = async (req: Request, res: Response, next: Nex
 	try {
 		const decoded = await admin.auth().verifyIdToken(token)
 		;(req as any).uid = decoded.uid
+		if (typeof decoded.email === 'string' && decoded.email) {
+			;(req as any).email = decoded.email
+		}
 		next()
 	} catch (e) {
 		return res.status(401).json({ error: 'Invalid token' })

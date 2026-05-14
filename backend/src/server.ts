@@ -1,5 +1,6 @@
 import http from 'http'
 import { Server } from 'socket.io'
+import { getCorsOriginConfig } from './config/corsOrigins.js'
 import { logProductionEnvStatus } from './config/envCheck.js'
 import { createApp } from './app.js'
 import { initSequelize, sequelize } from './database/index.js'
@@ -19,7 +20,8 @@ async function main() {
 	// Create app after database is ready
 	const app = createApp(router)
 	const server = http.createServer(app)
-	io = new Server(server, { cors: { origin: process.env.CORS_ORIGIN?.split(',') || '*' } })
+	const corsOpts = getCorsOriginConfig()
+	io = new Server(server, { cors: { origin: corsOpts.origin, credentials: corsOpts.credentials } })
 
 	io.on('connection', (socket) => {
 		console.log('Client connected:', socket.id)

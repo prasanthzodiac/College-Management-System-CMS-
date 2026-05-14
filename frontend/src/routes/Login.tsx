@@ -39,6 +39,15 @@ export function Login() {
 				return
 			}
 			await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword)
+			try {
+				await api.post('/api/auth/sync', {
+					email: trimmedEmail,
+					name: auth.currentUser?.displayName || undefined,
+					photoUrl: auth.currentUser?.photoURL || undefined,
+				})
+			} catch (syncErr) {
+				console.error('Failed to sync user after login:', syncErr)
+			}
 			navigate(resolveDashboardPath(trimmedEmail))
 		} catch (e: any) {
 			setError(e?.message || 'Login failed')
