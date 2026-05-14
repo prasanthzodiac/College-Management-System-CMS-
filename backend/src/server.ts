@@ -1,5 +1,6 @@
 import http from 'http'
 import { Server } from 'socket.io'
+import { logProductionEnvStatus } from './config/envCheck.js'
 import { createApp } from './app.js'
 import { initSequelize, sequelize } from './database/index.js'
 
@@ -8,6 +9,7 @@ const basePort = Number(process.env.PORT || 8080)
 export let io: Server
 
 async function main() {
+	logProductionEnvStatus()
 	// Initialize Sequelize first (this imports models)
 	await initSequelize()
 	// Sync database after models are loaded

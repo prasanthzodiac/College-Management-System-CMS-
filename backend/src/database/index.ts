@@ -2,6 +2,16 @@ import { Sequelize } from 'sequelize'
 
 export let sequelize: Sequelize
 
+/** Strip params some hosts add (e.g. Aiven `ssl-mode=REQUIRED`); SSL still enabled via dialectOptions. */
+function normalizeMysqlUrlForSequelize(mysqlUrl: string): string {
+	let out = mysqlUrl.trim()
+	out = out.replace(/\?sslaccept=strict/gi, '').replace(/&sslaccept=strict/gi, '')
+	out = out.replace(/\?ssl-mode=[^&]*/gi, '')
+	out = out.replace(/&ssl-mode=[^&]*/gi, '')
+	out = out.replace(/\?+$/, '')
+	return out
+}
+
 export const initSequelize = async () => {
 	const dbUrl = process.env.DATABASE_URL?.trim()
 	if (!dbUrl) throw new Error('Missing DATABASE_URL')
@@ -39,8 +49,10 @@ export const initSequelize = async () => {
 		)
 	}
 
+	const connectUrl = normalizeMysqlUrlForSequelize(dbUrl)
+
 	// Create Sequelize instance first
-	sequelize = new Sequelize(dbUrl.replace('?sslaccept=strict', ''), {
+	sequelize = new Sequelize(connectUrl, {
 		dialect: 'mysql',
 		dialectModule: undefined,
 		dialectOptions: isLocalhost ? {} : {
