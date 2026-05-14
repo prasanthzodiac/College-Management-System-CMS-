@@ -24,6 +24,21 @@ export const initSequelize = async () => {
 	}
 	const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1'
 
+	const h = url.hostname.toLowerCase()
+	const placeholderHosts = new Set([
+		'host',
+		'hostname',
+		'example.com',
+		'your-db-host.onrender.com',
+		'replace_real_hostname',
+	])
+	if (!h || placeholderHosts.has(h)) {
+		throw new Error(
+			`DATABASE_URL hostname is invalid or still a placeholder ("${url.hostname}"). ` +
+				'Use the real hostname from your MySQL provider (Render: open your **MySQL** service → copy **Internal Database URL** or **External Database URL** — do not leave template text like @HOST: or @your-db-host.onrender.com without replacing it).'
+		)
+	}
+
 	// Create Sequelize instance first
 	sequelize = new Sequelize(dbUrl.replace('?sslaccept=strict', ''), {
 		dialect: 'mysql',
