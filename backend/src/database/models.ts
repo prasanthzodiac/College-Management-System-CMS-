@@ -1,0 +1,16 @@
+// Import all models to ensure they're registered with Sequelize
+import '../models/User.js'
+import '../models/Subject.js'
+import '../models/Enrollment.js'
+import '../models/Attendance.js'
+import '../models/CertificateRequest.js'
+import '../models/Leave.js'
+import '../models/Grievance.js'
+import '../models/AssignmentSubmission.js'
+import '../models/Assignment.js'
+import '../models/Feedback.js'
+import '../models/StaffSubject.js'
+import '../models/Event.js'
+import '../models/Circular.js'
+import '../models/InternalMark.js'
+
